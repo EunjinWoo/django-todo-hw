@@ -13,7 +13,7 @@ def sign_up_view(request):
         if user:
             return HttpResponse('이미 로그인 되었습니다. 홈페이지 보여주기')
         else:
-            return HttpResponse('회원가입 페이지')
+            return render(request, 'user/signup.html')
 
     if request.method == 'POST':
         username = request.POST.get('username', '')
@@ -52,4 +52,4 @@ def sign_in_view(request):
         if user:
             return HttpResponse('이미 로그인 됨. 홈페이지 보여주기')
         else:
-            return HttpResponse('로그인 페이지.')
+            return render(request, 'user/signin.html')
