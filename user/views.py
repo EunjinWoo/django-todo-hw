@@ -1,14 +1,20 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from .models import UserModel
 from django.http import HttpResponse
 from django.contrib.auth import get_user_model
+from django.contrib import auth
 from django.views.decorators.csrf import csrf_exempt
 
 # Create your views here.
 @csrf_exempt
 def sign_up_view(request):
     if request.method == 'GET':
-        pass
+        user = request.user.is_authenticated  # 인증된 사용자를 user라는 변수에 입력
+        if user:
+            return HttpResponse('이미 로그인 되었습니다. 홈페이지 보여주기')
+        else:
+            return HttpResponse('회원가입 페이지')
+
     if request.method == 'POST':
         username = request.POST.get('username', '')
         password = request.POST.get('password', '')
@@ -31,4 +37,19 @@ def sign_up_view(request):
 @csrf_exempt
 def sign_in_view(request):
     if request.method == 'POST':
-        pass
+        username = request.POST.get('username', '')
+        password = request.POST.get('password', '')
+
+        me = auth.authenticate(request, username=username, password=password)
+        if me is not None:
+            auth.login(request, me)
+            return HttpResponse("로그인 완료")
+        else:
+            return HttpResponse('유저이름 혹은 패스워드를 확인해주세요.')
+
+    elif request.method == 'GET':
+        user = request.user.is_authenticated  # 인증된 사용자를 user라는 변수에 입력
+        if user:
+            return HttpResponse('이미 로그인 됨. 홈페이지 보여주기')
+        else:
+            return HttpResponse('로그인 페이지.')
